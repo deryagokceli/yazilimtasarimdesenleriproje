@@ -1,22 +1,22 @@
 package com.akinciteknik.servis.service;
 
 import com.akinciteknik.servis.model.Randevu;
-import com.akinciteknik.servis.model.Parca;//*facade fabrikayı ve stratejiyi entegre ediyoruz
+import com.akinciteknik.servis.model.Parca;
 import com.akinciteknik.servis.repository.RandevuRepository;
 import com.akinciteknik.servis.repository.ParcaRepository;
-import com.akinciteknik.servis.service.strategy.FiyatHesaplamaStratejisi;//*
+import com.akinciteknik.servis.service.strategy.FiyatHesaplamaStratejisi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.math.BigDecimal;//*
+import java.math.BigDecimal;
 
 @Service
-@RequiredArgsConstructor //Repositoryleri içeri enjekte etmek için kullanıyoruz
+@RequiredArgsConstructor
 public class ServisYonetimFacade {
 
     private final RandevuRepository randevuRepository;
     private final ParcaRepository parcaRepository;
-    private final StratejiFabrikasi stratejiFabrikasi; // FABRİKA BURAYA EKLENDİ
+    private final StratejiFabrikasi stratejiFabrikasi;
 
     @Transactional
     public Randevu servisKaydiOlustur(Randevu randevu, Long parcaId, Double saat, String stratejiTipi) {
@@ -28,8 +28,24 @@ public class ServisYonetimFacade {
         FiyatHesaplamaStratejisi strateji = stratejiFabrikasi.stratejiGetir(stratejiTipi);
         BigDecimal toplam = strateji.hesapla(parca.getBirimFiyat(), saat);
 
-        // 3. Randevuyu güncelleyip kaydedelim
+        // 3. Şeffaflık Verilerini Ayrıştıralım
+        // Parça ücretini doğrudan parçadan alıyoruz
+        double parcaMaliyeti = parca.getBirimFiyat().doubleValue();
+
+        // İşçilik = Toplam Tutar - Parça Maliyeti
+        double iscilikMaliyeti = toplam.doubleValue() - parcaMaliyeti;
+
+        // 4. Randevu Nesnesini Detaylıca Güncelleyelim
+        randevu.setParcaUcreti(parcaMaliyeti);
+        randevu.setIscilikUcreti(iscilikMaliyeti);
         randevu.setToplamTutar(toplam.doubleValue());
+
+        // Müşteriye gösterilecek servis notunu mevcut açıklamadan alalım
+        if (randevu.getServisNotu() == null || randevu.getServisNotu().isEmpty()) {
+            randevu.setServisNotu(randevu.getArizaAciklamasi());
+        }
+
+        // 5. Kaydedelim
         return randevuRepository.save(randevu);
     }
 }

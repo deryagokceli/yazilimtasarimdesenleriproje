@@ -35,4 +35,15 @@ public class Randevu {
 
     @Column(name = "OlusturmaTarihi")
     private java.time.LocalDateTime olusturmaTarihi = java.time.LocalDateTime.now();
+
+    //seffaflık için eklediğim yeni satırlar
+
+    @Column(name = "ParcaUcreti")
+    private Double parcaUcreti;
+
+    @Column(name = "IscilikUcreti")
+    private Double iscilikUcreti;
+
+    @Column(name = "ServisNotu")
+    private String servisNotu;
 }
