@@ -13,12 +13,18 @@ public class Kullanici {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "Ad") // Veritabanındaki adı 'Ad' ise bu şart
     private String ad;
+
+    @Column(name = "Soyad")
     private String soyad;
 
-    @Column(unique = true)
+    @Column(name = "Email", unique = true)
     private String email;
 
+    @Column(name = "Sifre")
     private String sifre;
-    private String rol; // ADMIN, MUSTERI, TEKNISYEN
+
+    @Column(name = "Rol")
+    private String rol;
 }

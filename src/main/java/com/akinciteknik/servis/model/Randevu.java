@@ -9,19 +9,30 @@ import java.time.LocalDateTime;
 @Table(name = "Randevular")
 @Getter @Setter
 public class Randevu {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "Id")
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "musteri_id")
+    @JoinColumn(name = "MusteriId")
     private Kullanici musteri;
 
+    @Column(name = "CihazMarka")
     private String cihazMarka;
+
+    @Column(name = "CihazModel")
     private String cihazModel;
+
+    @Column(name = "ArizaAciklamasi")
     private String arizaAciklamasi;
+
+    @Column(name = "Durum")
     private String durum = "BEKLEMEDE";
+
+    @Column(name = "ToplamTutar")
     private Double toplamTutar;
-    private LocalDateTime olusturmaTarihi = LocalDateTime.now();
+
+    @Column(name = "OlusturmaTarihi")
+    private java.time.LocalDateTime olusturmaTarihi = java.time.LocalDateTime.now();
 }
