@@ -11,6 +11,7 @@ public class Kullanici {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "Id")
     private Long id;
 
     @Column(name = "Ad") // Veritabanındaki adı 'Ad' ise bu şart
