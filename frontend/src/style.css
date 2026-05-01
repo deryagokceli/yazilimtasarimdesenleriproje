@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+@theme {
+  /* Referans sitedeki o koyu mavi ve gri tonlarını buraya tanımlıyoruz */
+  --color-akinci-mavi: #003366;
+  --color-akinci-gri: #f4f4f4;
+  --color-turuncu: #f97316;
+}
