@@ -1,5 +1,4 @@
 package com.akinciteknik.servis.model;
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

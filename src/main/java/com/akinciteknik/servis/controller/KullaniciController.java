@@ -18,14 +18,15 @@ public class KullaniciController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Kullanici loginVerisi) {
-        // Email üzerinden kullanıcıyı bulalım
-        Optional<Kullanici> kullanici = kullaniciRepository.findAll().stream()
-                .filter(k -> k.getEmail().equals(loginVerisi.getEmail()) &&
-                        k.getSifre().equals(loginVerisi.getSifre()))
-                .findFirst();
+
+        Optional<Kullanici> kullanici =
+                kullaniciRepository.findByEmailAndSifre(
+                        loginVerisi.getEmail(),
+                        loginVerisi.getSifre()
+                );
 
         if (kullanici.isPresent()) {
-            return ResponseEntity.ok(kullanici.get()); // Giriş başarılı
+            return ResponseEntity.ok(kullanici.get());
         } else {
             return ResponseEntity.status(401).body("Email veya şifre hatalı!");
         }
