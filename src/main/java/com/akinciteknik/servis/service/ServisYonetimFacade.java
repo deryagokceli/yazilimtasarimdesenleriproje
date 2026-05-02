@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -47,5 +48,8 @@ public class ServisYonetimFacade {
 
         // 5. Kaydedelim
         return randevuRepository.save(randevu);
+    }
+    public List<Randevu> getMusteriRandevulari(Long musteriId) {
+        return randevuRepository.findByMusteriId(musteriId);
     }
 }

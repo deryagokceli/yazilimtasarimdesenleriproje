@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/randevular")
@@ -25,5 +26,12 @@ public class RandevuController {
 
         Randevu yeniRandevu = servisYonetimFacade.servisKaydiOlustur(randevu, parcaId, saat, stratejiTipi);
         return ResponseEntity.ok(yeniRandevu);
+    }
+    // Müşteri paneli için eklenen liste metodu
+    @GetMapping("/musteri/{musteriId}")
+    public ResponseEntity<List<Randevu>> getRandevularByMusteri(@PathVariable Long musteriId) {
+        // Facade üzerinden verileri çekiyoruz
+        List<Randevu> liste = servisYonetimFacade.getMusteriRandevulari(musteriId);
+        return ResponseEntity.ok(liste);
     }
 }
