@@ -35,6 +35,10 @@ public class Randevu {
     @Column(name = "OlusturmaTarihi")
     private java.time.LocalDateTime olusturmaTarihi = java.time.LocalDateTime.now();
 
+    @ManyToOne
+    @JoinColumn(name = "TeknisyenId")
+    private Kullanici teknisyen;
+
     //seffaflık için eklediğim yeni satırlar
 
     @Column(name = "ParcaUcreti")
