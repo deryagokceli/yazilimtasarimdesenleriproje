@@ -16,6 +16,8 @@ public class RateLimitInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
+        System.out.println("PROXY CALISTI: " + request.getRequestURI());
+
         String ipAdresi = request.getRemoteAddr();
         int mevcutIstekSayisi = istekSayilari.getOrDefault(ipAdresi, 0);
 
