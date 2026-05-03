@@ -1,5 +1,6 @@
 package com.akinciteknik.servis.service;
 
+import com.akinciteknik.servis.config.DatabaseManager;
 import com.akinciteknik.servis.model.Randevu;
 import com.akinciteknik.servis.model.Parca;
 import com.akinciteknik.servis.repository.RandevuRepository;
@@ -21,8 +22,13 @@ public class ServisYonetimFacade {
     private final StratejiFabrikasi stratejiFabrikasi;
     private final List<RandevuObserver> observerlar;
 
+
+
     @Transactional
     public Randevu servisKaydiOlustur(Randevu randevu, Long parcaId, Double saat, String stratejiTipi) {
+
+        DatabaseManager.getInstance().baglantiKontrol();
+
         // 1. Parçayı bulalım
         Parca parca = parcaRepository.findById(parcaId)
                 .orElseThrow(() -> new RuntimeException("Parça bulunamadı"));
@@ -50,6 +56,7 @@ public class ServisYonetimFacade {
 
         // 5. Kaydedelim
         return randevuRepository.save(randevu);
+
     }
     @Transactional
     public Randevu randevuDurumuGuncelle(Long randevuId, String yeniDurum) {
