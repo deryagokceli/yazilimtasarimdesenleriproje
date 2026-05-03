@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
+import com.akinciteknik.servis.service.observer.RandevuObserver;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +19,7 @@ public class ServisYonetimFacade {
     private final RandevuRepository randevuRepository;
     private final ParcaRepository parcaRepository;
     private final StratejiFabrikasi stratejiFabrikasi;
+    private final List<RandevuObserver> observerlar;
 
     @Transactional
     public Randevu servisKaydiOlustur(Randevu randevu, Long parcaId, Double saat, String stratejiTipi) {
@@ -48,6 +50,20 @@ public class ServisYonetimFacade {
 
         // 5. Kaydedelim
         return randevuRepository.save(randevu);
+    }
+    @Transactional
+    public Randevu randevuDurumuGuncelle(Long randevuId, String yeniDurum) {
+        Randevu randevu = randevuRepository.findById(randevuId)
+                .orElseThrow(() -> new RuntimeException("Randevu bulunamadı"));
+
+        randevu.setDurum(yeniDurum);
+        Randevu kaydedilenRandevu = randevuRepository.save(randevu);
+
+        if ("TAMAMLANDI".equalsIgnoreCase(yeniDurum)) {
+            observerlar.forEach(observer -> observer.guncelle(kaydedilenRandevu));
+        }
+
+        return kaydedilenRandevu;
     }
     public List<Randevu> getMusteriRandevulari(Long musteriId) {
         return randevuRepository.findByMusteriId(musteriId);
