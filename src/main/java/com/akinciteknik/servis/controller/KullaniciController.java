@@ -11,7 +11,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/kullanicilar")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
 public class KullaniciController {
 
     private final KullaniciRepository kullaniciRepository;

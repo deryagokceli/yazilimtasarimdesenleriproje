@@ -12,7 +12,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/randevular")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*") // Vue.js bağlantısı için gerekli
 public class RandevuController {
 
     private final ServisYonetimFacade servisYonetimFacade;
@@ -33,5 +32,17 @@ public class RandevuController {
         // Facade üzerinden verileri çekiyoruz
         List<Randevu> liste = servisYonetimFacade.getMusteriRandevulari(musteriId);
         return ResponseEntity.ok(liste);
+    }
+    @PutMapping("/{id}/durum")
+    public ResponseEntity<?> randevuDurumGuncelle(
+            @PathVariable Long id,
+            @RequestParam String durum) {
+
+        try {
+            Randevu guncellenen = servisYonetimFacade.randevuDurumuGuncelle(id, durum);
+            return ResponseEntity.ok(guncellenen);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
