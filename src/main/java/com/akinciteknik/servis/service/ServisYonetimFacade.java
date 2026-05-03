@@ -34,7 +34,7 @@ public class ServisYonetimFacade {
         double parcaMaliyeti = parca.getBirimFiyat().doubleValue();
 
         // İşçilik = Toplam Tutar - Parça Maliyeti
-        double iscilikMaliyeti = toplam.doubleValue() - parcaMaliyeti;
+        double iscilikMaliyeti = saat * 500;
 
         // 4. Randevu Nesnesini Detaylıca Güncelleyelim
         randevu.setParcaUcreti(parcaMaliyeti);
