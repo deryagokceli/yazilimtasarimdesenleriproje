@@ -306,6 +306,13 @@
         </div>
       </div>
     </div>
+    <div
+      v-if="toastMessage"
+      class="fixed top-6 right-6 z-[200] bg-[#1a237e] text-white px-6 py-4 rounded-2xl shadow-2xl border border-blue-300 max-w-sm"
+    >
+      <div class="font-bold mb-1">Bildirim</div>
+      <div class="text-sm text-blue-100">{{ toastMessage }}</div>
+    </div>
 
   </div>
 </template>
@@ -319,6 +326,9 @@ const email = ref('')
 const sifre = ref('')
 const user = ref(null)
 const randevular = ref([])
+const toastMessage = ref('')
+const oncekiDurumlar = ref({})
+let randevuKontrolTimer = null
 
 // Slider
 const sliderIndex = ref(0)
@@ -386,6 +396,9 @@ const handleLogin = async () => {
     user.value = response.data
     isLoginOpen.value = false
     fetchRandevular()
+    if (user.value.rol === 'MUSTERI') {
+      randevuKontrolTimer = setInterval(fetchRandevular, 5000)
+    }
   } catch (error) {
     alert('Hata: Giriş bilgileri geçersiz.')
   }
@@ -393,22 +406,46 @@ const handleLogin = async () => {
 
 const fetchRandevular = async () => {
   try {
+    let response
+
     if (user.value?.rol === 'ADMIN') {
-      const response = await axios.get('http://localhost:8080/api/randevular')
-      randevular.value = response.data
+      response = await axios.get('http://localhost:8080/api/randevular')
     } else {
-      const response = await axios.get(`http://localhost:8080/api/randevular/musteri/${user.value.id}`)
-      randevular.value = response.data
+      response = await axios.get(`http://localhost:8080/api/randevular/musteri/${user.value.id}`)
     }
+
+    const yeniRandevular = response.data
+
+    if (user.value?.rol === 'MUSTERI') {
+      yeniRandevular.forEach((randevu) => {
+        const eskiDurum = oncekiDurumlar.value[randevu.id]
+
+        if (eskiDurum && eskiDurum !== randevu.durum) {
+          showToast(`Randevu #${randevu.id} durumu "${randevu.durum}" olarak güncellendi.`)
+        }
+
+        oncekiDurumlar.value[randevu.id] = randevu.durum
+      })
+    }
+
+    randevular.value = yeniRandevular
   } catch (error) {
     console.error('Randevular yüklenemedi')
   }
 }
+
+const showToast = (message) => {
+  toastMessage.value = message
+
+  setTimeout(() => {
+    toastMessage.value = ''
+  }, 3500)
+}
+
 const durumGuncelle = async (id, yeniDurum) => {
   try {
     await axios.put(`http://localhost:8080/api/randevular/${id}/durum?durum=${yeniDurum}`)
     await fetchRandevular()
-    alert(`Randevu durumu ${yeniDurum} olarak güncellendi.`)
   } catch (error) {
     alert('Durum güncellenemedi.')
   }
@@ -417,6 +454,12 @@ const durumGuncelle = async (id, yeniDurum) => {
 const logout = () => {
   user.value = null
   randevular.value = []
+  oncekiDurumlar.value = {}
+
+  if (randevuKontrolTimer) {
+    clearInterval(randevuKontrolTimer)
+    randevuKontrolTimer = null
+  }
 }
 </script>
 
