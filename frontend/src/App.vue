@@ -178,6 +178,27 @@
       <p class="text-gray-400 mb-8 text-sm">
         Tüm servis randevularını buradan yönetebilirsiniz.
       </p>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white border border-gray-100 rounded-2xl shadow-sm p-5">
+          <p class="text-xs font-bold text-gray-400 uppercase mb-2">Toplam Randevu</p>
+          <p class="text-3xl font-extrabold text-[#1a237e]">{{ toplamRandevu }}</p>
+        </div>
+
+        <div class="bg-white border border-gray-100 rounded-2xl shadow-sm p-5">
+          <p class="text-xs font-bold text-gray-400 uppercase mb-2">Onarımda</p>
+          <p class="text-3xl font-extrabold text-blue-600">{{ onarimdakiRandevu }}</p>
+        </div>
+
+        <div class="bg-white border border-gray-100 rounded-2xl shadow-sm p-5">
+          <p class="text-xs font-bold text-gray-400 uppercase mb-2">Tamamlandı</p>
+          <p class="text-3xl font-extrabold text-green-600">{{ tamamlananRandevu }}</p>
+        </div>
+
+        <div class="bg-white border border-gray-100 rounded-2xl shadow-sm p-5">
+          <p class="text-xs font-bold text-gray-400 uppercase mb-2">Toplam Gelir</p>
+          <p class="text-3xl font-extrabold text-orange-600">{{ toplamGelir }} ₺</p>
+        </div>
+      </div>
 
       <div class="bg-white rounded-2xl shadow-sm overflow-hidden border">
         <table class="w-full text-left">
@@ -318,7 +339,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import axios from 'axios'
 
 const isLoginOpen = ref(false)
@@ -326,6 +347,19 @@ const email = ref('')
 const sifre = ref('')
 const user = ref(null)
 const randevular = ref([])
+const toplamRandevu = computed(() => randevular.value.length)
+
+const tamamlananRandevu = computed(() =>
+  randevular.value.filter(r => r.durum === 'TAMAMLANDI').length
+)
+
+const onarimdakiRandevu = computed(() =>
+  randevular.value.filter(r => r.durum === 'ONARIMDA').length
+)
+
+const toplamGelir = computed(() =>
+  randevular.value.reduce((toplam, r) => toplam + (r.toplamTutar || 0), 0)
+)
 const toastMessage = ref('')
 const oncekiDurumlar = ref({})
 let randevuKontrolTimer = null
