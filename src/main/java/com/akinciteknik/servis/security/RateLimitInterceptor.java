@@ -11,23 +11,41 @@ import java.util.Map;
 @Component
 public class RateLimitInterceptor implements HandlerInterceptor {
 
-    private final Map<String, Integer> istekSayilari = new HashMap<>();
+    private static class IstekBilgisi {
+        int sayac;
+        long baslangicZamani;
+
+        IstekBilgisi(int sayac, long baslangicZamani) {
+            this.sayac = sayac;
+            this.baslangicZamani = baslangicZamani;
+        }
+    }
+
+    private final Map<String, IstekBilgisi> istekKayitlari = new HashMap<>();
+
+    private final int LIMIT = 100;
+    private final long ZAMAN_ARALIGI = 60_000; // 60 saniye
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-        System.out.println("PROXY CALISTI: " + request.getRequestURI());
-
         String ipAdresi = request.getRemoteAddr();
-        int mevcutIstekSayisi = istekSayilari.getOrDefault(ipAdresi, 0);
+        long simdi = System.currentTimeMillis();
 
-        if (mevcutIstekSayisi >= 20) {
+        IstekBilgisi bilgi = istekKayitlari.get(ipAdresi);
+
+        if (bilgi == null || simdi - bilgi.baslangicZamani > ZAMAN_ARALIGI) {
+            istekKayitlari.put(ipAdresi, new IstekBilgisi(1, simdi));
+            return true;
+        }
+
+        if (bilgi.sayac >= LIMIT) {
             response.setStatus(429);
             response.getWriter().write("Cok fazla istek yaptiniz. Lutfen daha sonra tekrar deneyin.");
             return false;
         }
 
-        istekSayilari.put(ipAdresi, mevcutIstekSayisi + 1);
+        bilgi.sayac++;
         return true;
     }
 }
