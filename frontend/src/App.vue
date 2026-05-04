@@ -25,7 +25,7 @@
         </a>
         <template v-if="!user">
           <button @click="isLoginOpen = true" class="border border-[#1a237e] text-[#1a237e] px-5 py-2 rounded-full text-sm font-bold hover:bg-blue-50 transition">
-            Müşteri Girişi
+            Giriş
           </button>
         </template>
         <template v-else>
@@ -172,6 +172,76 @@
 
     </div><!-- end guest view -->
 
+    <!-- ===== ADMIN PANELİ ===== -->
+    <div v-else-if="user.rol === 'ADMIN'" class="max-w-7xl mx-auto py-12 px-6">
+      <h2 class="text-3xl font-bold mb-2 text-[#1a237e]">Admin Yönetim Paneli</h2>
+      <p class="text-gray-400 mb-8 text-sm">
+        Tüm servis randevularını buradan yönetebilirsiniz.
+      </p>
+
+      <div class="bg-white rounded-2xl shadow-sm overflow-hidden border">
+        <table class="w-full text-left">
+          <thead class="bg-gray-50 border-b">
+            <tr>
+              <th class="p-4 font-bold text-sm text-[#1a237e]">Müşteri</th>
+              <th class="p-4 font-bold text-sm text-[#1a237e]">Cihaz / Arıza</th>
+              <th class="p-4 font-bold text-sm text-[#1a237e]">Durum</th>
+              <th class="p-4 font-bold text-sm text-[#1a237e]">Toplam</th>
+              <th class="p-4 font-bold text-sm text-[#1a237e]">İşlem</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr v-for="randevu in randevular" :key="randevu.id" class="border-b hover:bg-gray-50 transition">
+              <td class="p-4 text-sm">
+                {{ randevu.musteri?.ad }} {{ randevu.musteri?.soyad }}
+              </td>
+
+              <td class="p-4">
+                <div class="font-semibold">{{ randevu.cihazMarka }} {{ randevu.cihazModel }}</div>
+                <div class="text-xs text-gray-400 mt-0.5">{{ randevu.arizaAciklamasi }}</div>
+              </td>
+
+              <td class="p-4">
+                <span class="px-3 py-1 rounded-full text-xs font-bold"
+                      :class="{
+                        'bg-yellow-100 text-yellow-700': randevu.durum === 'BEKLEMEDE',
+                        'bg-blue-100 text-blue-700': randevu.durum === 'ONARIMDA',
+                        'bg-green-100 text-green-700': randevu.durum === 'TAMAMLANDI',
+                        'bg-red-100 text-red-700': randevu.durum === 'IPTAL'
+                      }">
+                  {{ randevu.durum }}
+                </span>
+              </td>
+
+              <td class="p-4 font-bold text-orange-600">
+                {{ randevu.toplamTutar }} ₺
+              </td>
+
+              <td class="p-4">
+                <div class="flex gap-2 flex-wrap">
+                  <button @click="durumGuncelle(randevu.id, 'ONARIMDA')"
+                    class="bg-blue-500 text-white px-3 py-1 rounded-lg text-xs font-bold hover:bg-blue-600">
+                    Onarıma Al
+                  </button>
+
+                  <button @click="durumGuncelle(randevu.id, 'TAMAMLANDI')"
+                    class="bg-green-500 text-white px-3 py-1 rounded-lg text-xs font-bold hover:bg-green-600">
+                    Tamamla
+                  </button>
+
+                  <button @click="durumGuncelle(randevu.id, 'IPTAL')"
+                    class="bg-red-500 text-white px-3 py-1 rounded-lg text-xs font-bold hover:bg-red-600">
+                    İptal
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
     <!-- ===== MÜŞTERİ PANELİ ===== -->
     <div v-else class="max-w-6xl mx-auto py-12 px-6">
       <h2 class="text-3xl font-bold mb-2 text-[#1a237e]">Servis Geçmişim ve Faturalarım</h2>
@@ -218,8 +288,8 @@
       <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md">
         <div class="text-center mb-8">
           <div class="text-5xl mb-3">🔧</div>
-          <h3 class="text-2xl font-bold text-[#1a237e]">Müşteri Paneli</h3>
-          <p class="text-gray-400 mt-1 text-sm">Servis takibi ve faturalarınız için giriş yapın.</p>
+          <h3 class="text-2xl font-bold text-[#1a237e]">Sistem Girişi</h3>
+          <p class="text-gray-400 mt-1 text-sm">Servis takibi ve yönetim paneli için giriş yapın.</p>
         </div>
         <div class="space-y-4">
           <input v-model="email" type="email" placeholder="E-posta Adresiniz"
@@ -323,10 +393,24 @@ const handleLogin = async () => {
 
 const fetchRandevular = async () => {
   try {
-    const response = await axios.get(`http://localhost:8080/api/randevular/musteri/${user.value.id}`)
-    randevular.value = response.data
+    if (user.value?.rol === 'ADMIN') {
+      const response = await axios.get('http://localhost:8080/api/randevular')
+      randevular.value = response.data
+    } else {
+      const response = await axios.get(`http://localhost:8080/api/randevular/musteri/${user.value.id}`)
+      randevular.value = response.data
+    }
   } catch (error) {
     console.error('Randevular yüklenemedi')
+  }
+}
+const durumGuncelle = async (id, yeniDurum) => {
+  try {
+    await axios.put(`http://localhost:8080/api/randevular/${id}/durum?durum=${yeniDurum}`)
+    await fetchRandevular()
+    alert(`Randevu durumu ${yeniDurum} olarak güncellendi.`)
+  } catch (error) {
+    alert('Durum güncellenemedi.')
   }
 }
 
