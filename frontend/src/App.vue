@@ -44,54 +44,98 @@
         📞 HEMEN SERVİS ÇAĞIR
       </a>
 
-      <!-- HERO / SLIDER AREA -->
-      <div class="relative bg-[#1a237e] overflow-hidden">
-        <!-- Sliding images -->
-        <div class="flex transition-transform duration-700 ease-in-out" :style="{ transform: `translateX(-${sliderIndex * 100}%)` }">
-          <div v-for="img in sliderImages" :key="img" class="min-w-full h-72 md:h-96 bg-[#1a237e] flex items-center justify-center overflow-hidden">
-            <img :src="img" class="w-full h-full object-cover opacity-60" alt="Beyaz Eşya Servisi" />
+      <!-- MODERN HERO -->
+      <section class="relative overflow-hidden bg-gradient-to-br from-[#0f172a] via-[#1a237e] to-[#111827] text-white">
+        <div class="absolute inset-0 opacity-20">
+          <div class="absolute -top-24 -right-24 w-96 h-96 bg-orange-400 rounded-full blur-3xl"></div>
+          <div class="absolute bottom-0 -left-24 w-80 h-80 bg-blue-400 rounded-full blur-3xl"></div>
+        </div>
+
+        <div class="relative max-w-7xl mx-auto px-6 py-24 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-2 text-sm text-blue-100 mb-6">
+              <span class="w-2 h-2 bg-green-400 rounded-full"></span>
+              Yalova ve çevresinde aynı gün servis
+            </div>
+
+            <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-6">
+              Beyaz eşya arızalarında hızlı, şeffaf ve güvenilir servis.
+            </h1>
+
+            <p class="text-blue-100 text-lg leading-relaxed mb-8 max-w-xl">
+              Akıncı Teknik Servis; buzdolabı, çamaşır makinesi, bulaşık makinesi, fırın ve ankastre ürünlerde profesyonel arıza tespiti ve onarım hizmeti sunar.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4">
+              <a href="tel:02266002027"
+                class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-xl font-extrabold text-center shadow-xl transition">
+                Servis Talebi Oluştur
+              </a>
+              <button @click="isLoginOpen = true"
+                class="bg-white/10 hover:bg-white/20 border border-white/20 text-white px-8 py-4 rounded-xl font-bold transition">
+                Panel Girişi
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 shadow-2xl">
+            <div class="bg-white text-gray-900 rounded-2xl p-6">
+              <div class="flex items-center justify-between mb-6">
+                <div>
+                  <p class="text-sm text-gray-400">Bugünkü servis durumu</p>
+                  <h3 class="text-2xl font-extrabold text-[#1a237e]">Aktif Operasyon</h3>
+                </div>
+                <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">CANLI</span>
+              </div>
+
+              <div class="space-y-4">
+                <div class="flex justify-between items-center border-b pb-3">
+                  <span class="text-gray-500 text-sm">Ortalama müdahale</span>
+                  <span class="font-bold">Aynı gün</span>
+                </div>
+                <div class="flex justify-between items-center border-b pb-3">
+                  <span class="text-gray-500 text-sm">Garanti</span>
+                  <span class="font-bold">1 yıl işçilik</span>
+                </div>
+                <div class="flex justify-between items-center border-b pb-3">
+                  <span class="text-gray-500 text-sm">Fiyatlandırma</span>
+                  <span class="font-bold">Şeffaf fatura</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-500 text-sm">Destek</span>
+                  <span class="font-bold">Telefon / WhatsApp</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <!-- Overlay text -->
-        <div class="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4">
-          <h1 class="text-3xl md:text-5xl font-extrabold mb-4 drop-shadow-lg">Profesyonel Beyaz Eşya Teknik Servisi</h1>
-          <p class="text-lg md:text-xl text-blue-200 mb-8 drop-shadow">Yalova ve çevresinde garantili onarım ve hızlı servis hizmeti.</p>
-          <a href="tel:02266002027" class="bg-orange-500 hover:bg-orange-600 text-white px-10 py-4 rounded-full font-extrabold text-lg transition shadow-2xl">
-            HEMEN SERVİS ÇAĞIR
-          </a>
-        </div>
-        <!-- Slider dots -->
-        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-          <button v-for="(_, i) in sliderImages" :key="i"
-            @click="sliderIndex = i"
-            class="w-2.5 h-2.5 rounded-full transition"
-            :class="sliderIndex === i ? 'bg-orange-500' : 'bg-white/50'">
-          </button>
-        </div>
-      </div>
+      </section>
 
       <!-- 4 ÖZELLİK KARTLARI -->
-      <section class="py-16 px-6 max-w-6xl mx-auto">
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-          <div class="text-center p-6 border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition">
-            <div class="text-4xl mb-3">🛡️</div>
-            <h3 class="font-extrabold text-[#1a237e] text-base mb-2">GARANTİLİ SERVİS</h3>
-            <p class="text-gray-500 text-sm">Tüm parça ve işçilik hizmetlerimiz 1 yıl garantilidir.</p>
+      <section class="py-16 px-6 max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="p-6 border border-gray-100 rounded-3xl shadow-sm hover:shadow-xl transition bg-white">
+            <div class="w-12 h-12 rounded-2xl bg-blue-50 text-[#1a237e] flex items-center justify-center font-black mb-5">01</div>
+            <h3 class="font-extrabold text-[#1a237e] text-base mb-2">Garantili Servis</h3>
+            <p class="text-gray-500 text-sm leading-relaxed">Parça ve işçilik süreçleri kayıt altına alınır, servis sonrası destek sağlanır.</p>
           </div>
-          <div class="text-center p-6 border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition">
-            <div class="text-4xl mb-3">⚡</div>
-            <h3 class="font-extrabold text-[#1a237e] text-base mb-2">HIZLI MÜDAHALE</h3>
-            <p class="text-gray-500 text-sm">Yalova geneline aynı gün yerinde servis sunuyoruz.</p>
+
+          <div class="p-6 border border-gray-100 rounded-3xl shadow-sm hover:shadow-xl transition bg-white">
+            <div class="w-12 h-12 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center font-black mb-5">02</div>
+            <h3 class="font-extrabold text-[#1a237e] text-base mb-2">Hızlı Müdahale</h3>
+            <p class="text-gray-500 text-sm leading-relaxed">Yalova ve çevresinde servis talepleri hızlıca değerlendirilir.</p>
           </div>
-          <div class="text-center p-6 border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition">
-            <div class="text-4xl mb-3">👨‍🔧</div>
-            <h3 class="font-extrabold text-[#1a237e] text-base mb-2">UZMAN KADRO</h3>
-            <p class="text-gray-500 text-sm">Alanında tecrübeli ve sertifikalı teknisyenler.</p>
+
+          <div class="p-6 border border-gray-100 rounded-3xl shadow-sm hover:shadow-xl transition bg-white">
+            <div class="w-12 h-12 rounded-2xl bg-green-50 text-green-700 flex items-center justify-center font-black mb-5">03</div>
+            <h3 class="font-extrabold text-[#1a237e] text-base mb-2">Uzman Teknisyen</h3>
+            <p class="text-gray-500 text-sm leading-relaxed">Randevular teknisyen atamasıyla takip edilir, süreç şeffaf yürütülür.</p>
           </div>
-          <div class="text-center p-6 border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition">
-            <div class="text-4xl mb-3">💰</div>
-            <h3 class="font-extrabold text-[#1a237e] text-base mb-2">ŞEFFAF FİYAT</h3>
-            <p class="text-gray-500 text-sm">Onarım öncesi net ücret bilgisi, sürpriz maliyet yok.</p>
+
+          <div class="p-6 border border-gray-100 rounded-3xl shadow-sm hover:shadow-xl transition bg-white">
+            <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-700 flex items-center justify-center font-black mb-5">04</div>
+            <h3 class="font-extrabold text-[#1a237e] text-base mb-2">Şeffaf Fatura</h3>
+            <p class="text-gray-500 text-sm leading-relaxed">Parça, işçilik ve toplam tutar müşteri panelinde açıkça görüntülenir.</p>
           </div>
         </div>
       </section>
