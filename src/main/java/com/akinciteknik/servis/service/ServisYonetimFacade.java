@@ -75,4 +75,7 @@ public class ServisYonetimFacade {
     public List<Randevu> getMusteriRandevulari(Long musteriId) {
         return randevuRepository.findByMusteriId(musteriId);
     }
+    public List<Randevu> tumRandevulariGetir() {
+        return randevuRepository.findAll();
+    }
 }

@@ -45,4 +45,8 @@ public class RandevuController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    @GetMapping
+    public List<Randevu> tumRandevulariGetir() {
+        return servisYonetimFacade.tumRandevulariGetir();
+    }
 }
