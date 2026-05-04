@@ -5,6 +5,8 @@ import com.akinciteknik.servis.service.ServisYonetimFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.akinciteknik.servis.service.command.RandevuCommand;
+import com.akinciteknik.servis.service.command.RandevuDurumGuncelleCommand;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -39,8 +41,14 @@ public class RandevuController {
             @RequestParam String durum) {
 
         try {
-            Randevu guncellenen = servisYonetimFacade.randevuDurumuGuncelle(id, durum);
-            return ResponseEntity.ok(guncellenen);
+
+            RandevuCommand command =
+                    new RandevuDurumGuncelleCommand(servisYonetimFacade, id, durum);
+
+            command.execute();
+
+            return ResponseEntity.ok("Durum güncellendi");
+
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
