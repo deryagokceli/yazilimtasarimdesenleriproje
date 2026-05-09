@@ -405,9 +405,7 @@ const toplamGelir = computed(() =>
   randevular.value.reduce((toplam, r) => toplam + (r.toplamTutar || 0), 0)
 )
 const toastMessage = ref('')
-const oncekiDurumlar = ref({})
-let randevuKontrolTimer = null
-
+let eventSource = null
 // Slider
 const sliderIndex = ref(0)
 const sliderImages = [
@@ -474,8 +472,16 @@ const handleLogin = async () => {
     user.value = response.data
     isLoginOpen.value = false
     fetchRandevular()
-    if (user.value.rol === 'MUSTERI') {
-      randevuKontrolTimer = setInterval(fetchRandevular, 5000)
+    if (user.value?.rol === 'MUSTERI') {
+
+      eventSource = new EventSource(
+        'http://localhost:8080/api/notifications/subscribe'
+      )
+
+      eventSource.addEventListener('randevu-guncelleme', (event) => {
+        showToast(event.data)
+        fetchRandevular()
+      })
     }
   } catch (error) {
     alert('Hata: Giriş bilgileri geçersiz.')
@@ -491,21 +497,7 @@ const fetchRandevular = async () => {
     } else {
       response = await axios.get(`http://localhost:8080/api/randevular/musteri/${user.value.id}`)
     }
-
     const yeniRandevular = response.data
-
-    if (user.value?.rol === 'MUSTERI') {
-      yeniRandevular.forEach((randevu) => {
-        const eskiDurum = oncekiDurumlar.value[randevu.id]
-
-        if (eskiDurum && eskiDurum !== randevu.durum) {
-          showToast(`Randevu #${randevu.id} durumu "${randevu.durum}" olarak güncellendi.`)
-        }
-
-        oncekiDurumlar.value[randevu.id] = randevu.durum
-      })
-    }
-
     randevular.value = yeniRandevular
   } catch (error) {
     console.error('Randevular yüklenemedi')
@@ -528,15 +520,13 @@ const durumGuncelle = async (id, yeniDurum) => {
     alert('Durum güncellenemedi.')
   }
 }
-
 const logout = () => {
   user.value = null
   randevular.value = []
-  oncekiDurumlar.value = {}
 
-  if (randevuKontrolTimer) {
-    clearInterval(randevuKontrolTimer)
-    randevuKontrolTimer = null
+  if (eventSource) {
+    eventSource.close()
+    eventSource = null
   }
 }
 </script>
