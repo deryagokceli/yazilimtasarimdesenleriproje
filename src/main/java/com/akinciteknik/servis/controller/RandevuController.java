@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.akinciteknik.servis.service.command.RandevuCommand;
 import com.akinciteknik.servis.service.command.RandevuDurumGuncelleCommand;
+import com.akinciteknik.servis.dto.ServisTalepRequest;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -53,8 +54,20 @@ public class RandevuController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    @GetMapping
-    public List<Randevu> tumRandevulariGetir() {
-        return servisYonetimFacade.tumRandevulariGetir();
+    @PostMapping("/servis-talebi")
+    public ResponseEntity<?> servisTalebiOlustur(@RequestBody ServisTalepRequest request) {
+        try {
+            Randevu randevu = servisYonetimFacade.servisTalebiOlustur(request);
+            return ResponseEntity.ok(randevu);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
+
+    @GetMapping
+    public ResponseEntity<List<Randevu>> tumRandevulariGetir() {
+        List<Randevu> liste = servisYonetimFacade.tumRandevulariGetir();
+        return ResponseEntity.ok(liste);
+    }
+
 }

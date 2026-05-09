@@ -12,6 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import com.akinciteknik.servis.service.observer.RandevuObserver;
+import com.akinciteknik.servis.dto.ServisTalepRequest;
+import com.akinciteknik.servis.model.Kullanici;
+import com.akinciteknik.servis.repository.KullaniciRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +24,7 @@ public class ServisYonetimFacade {
     private final ParcaRepository parcaRepository;
     private final StratejiFabrikasi stratejiFabrikasi;
     private final List<RandevuObserver> observerlar;
+    private final KullaniciRepository kullaniciRepository;
 
 
 
@@ -72,6 +76,34 @@ public class ServisYonetimFacade {
         }
 
         return kaydedilenRandevu;
+    }
+    @Transactional
+    public Randevu servisTalebiOlustur(ServisTalepRequest request) {
+
+        Kullanici musteri = kullaniciRepository.findByEmail(request.getEmail())
+                .orElseGet(() -> {
+                    Kullanici yeniMusteri = new Kullanici();
+                    yeniMusteri.setAd(request.getAd());
+                    yeniMusteri.setSoyad(request.getSoyad());
+                    yeniMusteri.setEmail(request.getEmail());
+                    yeniMusteri.setSifre("123456");
+                    yeniMusteri.setRol("MUSTERI");
+                    return kullaniciRepository.save(yeniMusteri);
+                });
+
+        Randevu randevu = new Randevu();
+        randevu.setMusteri(musteri);
+        randevu.setCihazMarka(request.getCihazMarka());
+        randevu.setCihazModel(request.getCihazModel());
+        randevu.setArizaAciklamasi(request.getArizaAciklamasi());
+        randevu.setDurum("BEKLEMEDE");
+
+        return servisKaydiOlustur(
+                randevu,
+                request.getParcaId(),
+                request.getSaat(),
+                request.getStratejiTipi()
+        );
     }
     public List<Randevu> getMusteriRandevulari(Long musteriId) {
         return randevuRepository.findByMusteriId(musteriId);
