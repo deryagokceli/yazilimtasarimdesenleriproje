@@ -35,13 +35,14 @@ public class ServisYonetimFacade {
 
         // 2. Strateji seçelim ve hesaplayalım
         FiyatHesaplamaStratejisi strateji = stratejiFabrikasi.stratejiGetir(stratejiTipi);
+        System.out.println("Aktif strateji: " + strateji.getClass().getSimpleName());
         BigDecimal toplam = strateji.hesapla(parca.getBirimFiyat(), saat);
 
         // 3. Şeffaflık Verilerini Ayrıştıralım
         // Parça ücretini doğrudan parçadan alıyoruz
         double parcaMaliyeti = parca.getBirimFiyat().doubleValue();
 
-        // İşçilik = Toplam Tutar - Parça Maliyeti
+        // İşçilik ücreti saatlik servis bedeline göre hesaplanır
         double iscilikMaliyeti = saat * 500;
 
         // 4. Randevu Nesnesini Detaylıca Güncelleyelim
