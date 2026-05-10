@@ -373,6 +373,30 @@
     <div v-else class="max-w-6xl mx-auto py-12 px-6">
       <h2 class="text-3xl font-bold mb-2 text-[#1a237e]">Servis Geçmişim ve Faturalarım</h2>
       <p class="text-gray-400 mb-8 text-sm">Hoş geldin, <span class="font-semibold text-gray-700">{{ user.ad }}</span></p>
+      <div class="bg-white border border-gray-100 rounded-3xl shadow-sm p-6 mb-8">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-5">
+          <div>
+            <h3 class="text-xl font-extrabold text-[#1a237e]">Yeni Servis Talebi</h3>
+            <p class="text-sm text-gray-400">Yeni bir cihaz arızası için servis kaydı oluşturabilirsiniz.</p>
+          </div>
+        </div>
+
+        <form @submit.prevent="musteriServisTalebiGonder" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <input v-model="musteriTalepFormu.cihazMarka" required placeholder="Cihaz Markası"
+            class="p-4 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-orange-500 text-sm">
+
+          <input v-model="musteriTalepFormu.cihazModel" required placeholder="Cihaz Modeli"
+            class="p-4 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-orange-500 text-sm">
+
+          <input v-model="musteriTalepFormu.arizaAciklamasi" required placeholder="Arıza açıklaması"
+            class="p-4 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-orange-500 text-sm">
+
+          <button type="submit"
+            class="md:col-span-3 bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-xl font-extrabold transition shadow-lg">
+            Yeni Servis Talebi Oluştur
+          </button>
+        </form>
+      </div>
 
       <div v-if="randevular.length === 0" class="text-center py-20 text-gray-400">
         <div class="text-5xl mb-4">📋</div>
@@ -478,7 +502,11 @@ const servisTalepFormu = ref({
   cihazModel: '',
   arizaAciklamasi: ''
 })
-
+const musteriTalepFormu = ref({
+  cihazMarka: '',
+  cihazModel: '',
+  arizaAciklamasi: ''
+})
 
 const markalar = [
   'ARÇELİK','BEKO','VESTEL','PROFİLO','BOSCH','SİEMENS',
@@ -602,6 +630,33 @@ const servisTalebiGonder = async () => {
     }
   } catch (error) {
     showToast('Servis talebi oluşturulamadı. Lütfen bilgileri kontrol edin.')
+  }
+}
+const musteriServisTalebiGonder = async () => {
+  try {
+    await axios.post('http://localhost:8080/api/randevular/servis-talebi', {
+      ad: user.value.ad,
+      soyad: user.value.soyad,
+      email: user.value.email,
+      telefon: '',
+      cihazMarka: musteriTalepFormu.value.cihazMarka,
+      cihazModel: musteriTalepFormu.value.cihazModel,
+      arizaAciklamasi: musteriTalepFormu.value.arizaAciklamasi,
+      parcaId: 7,
+      saat: 2,
+      stratejiTipi: 'STANDART'
+    })
+
+    showToast('Yeni servis talebiniz oluşturuldu.')
+    musteriTalepFormu.value = {
+      cihazMarka: '',
+      cihazModel: '',
+      arizaAciklamasi: ''
+    }
+
+    await fetchRandevular()
+  } catch (error) {
+    showToast('Servis talebi oluşturulamadı.')
   }
 }
 
