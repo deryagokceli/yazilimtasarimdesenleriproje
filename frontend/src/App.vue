@@ -4,7 +4,7 @@
     <!-- TOP BAR -->
     <div class="bg-[#1a237e] text-white text-sm py-2 px-4 flex justify-end gap-4">
       <a href="tel:02266002027" class="hover:text-orange-300 transition flex items-center gap-1">📞 Hemen Ara</a>
-      <a href="https://wa.me/902266002027" class="hover:text-orange-300 transition flex items-center gap-1">💬 WhatsApp</a>
+      <a href="https://wa.me/902266002027?text=Merhaba,%20servis%20hakkında%20bilgi%20almak%20istiyorum." class="hover:text-orange-300 transition flex items-center gap-1">💬 WhatsApp</a>
     </div>
 
     <!-- NAV -->
@@ -20,7 +20,7 @@
         <a href="tel:02266002027" class="hidden md:block bg-[#1a237e] text-white px-5 py-2 rounded-full text-sm font-bold hover:bg-blue-900 transition">
           📞 0226 600 20 27
         </a>
-        <a href="https://wa.me/902266002027" class="hidden md:block bg-green-500 text-white px-5 py-2 rounded-full text-sm font-bold hover:bg-green-600 transition">
+        <a href="https://wa.me/902266002027?text=Merhaba,%20servis%20hakkında%20bilgi%20almak%20istiyorum." class="hidden md:block bg-green-500 text-white px-5 py-2 rounded-full text-sm font-bold hover:bg-green-600 transition">
           WhatsApp'tan Yaz
         </a>
         <template v-if="!user">
@@ -67,7 +67,7 @@
             </p>
 
             <div class="flex flex-col sm:flex-row gap-4">
-              <a href="tel:02266002027"
+              <a href="#servis-talep-formu"
                 class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-xl font-extrabold text-center shadow-xl transition">
                 Servis Talebi Oluştur
               </a>
@@ -137,6 +137,68 @@
             <h3 class="font-extrabold text-[#1a237e] text-base mb-2">Şeffaf Fatura</h3>
             <p class="text-gray-500 text-sm leading-relaxed">Parça, işçilik ve toplam tutar müşteri panelinde açıkça görüntülenir.</p>
           </div>
+        </div>
+      </section>
+
+      <!-- SERVİS TALEP FORMU -->
+      <section id="servis-talep-formu" class="py-20 px-6 bg-gray-50 border-y border-gray-100">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+          <div>
+            <p class="text-sm font-bold text-orange-500 uppercase tracking-widest mb-3">Online Servis Talebi</p>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-[#1a237e] mb-5">
+              Arızanızı bildirin, servis sürecini hemen başlatalım.
+            </h2>
+            <p class="text-gray-500 leading-relaxed mb-8">
+              Formu doldurduktan sonra sistem sizin için bir servis kaydı oluşturur. Daha sonra aynı e-posta ile giriş yaparak servis durumunuzu ve fatura detaylarınızı takip edebilirsiniz.
+            </p>
+
+            <div class="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm">
+              <h3 class="font-extrabold text-[#1a237e] mb-4">Nasıl çalışır?</h3>
+              <div class="space-y-4">
+                <div class="flex gap-4">
+                  <div class="w-8 h-8 rounded-full bg-blue-50 text-[#1a237e] flex items-center justify-center font-bold text-sm">1</div>
+                  <p class="text-sm text-gray-600">Arıza ve iletişim bilgilerinizi gönderirsiniz.</p>
+                </div>
+                <div class="flex gap-4">
+                  <div class="w-8 h-8 rounded-full bg-blue-50 text-[#1a237e] flex items-center justify-center font-bold text-sm">2</div>
+                  <p class="text-sm text-gray-600">Sistem servis kaydınızı BEKLEMEDE durumuyla oluşturur.</p>
+                </div>
+                <div class="flex gap-4">
+                  <div class="w-8 h-8 rounded-full bg-blue-50 text-[#1a237e] flex items-center justify-center font-bold text-sm">3</div>
+                  <p class="text-sm text-gray-600">Admin panelinden servis süreci yönetilir ve size canlı bildirim gönderilir.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <form @submit.prevent="servisTalebiGonder" class="bg-white border border-gray-100 rounded-3xl shadow-xl p-6 md:p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input v-model="servisTalepFormu.ad" required placeholder="Ad"
+                class="p-4 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-orange-500 text-sm">
+              <input v-model="servisTalepFormu.soyad" required placeholder="Soyad"
+                class="p-4 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-orange-500 text-sm">
+              <input v-model="servisTalepFormu.email" required type="email" placeholder="E-posta"
+                class="p-4 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-orange-500 text-sm">
+              <input v-model="servisTalepFormu.telefon" required placeholder="Telefon"
+                class="p-4 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-orange-500 text-sm">
+              <input v-model="servisTalepFormu.cihazMarka" required placeholder="Cihaz Markası"
+                class="p-4 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-orange-500 text-sm">
+              <input v-model="servisTalepFormu.cihazModel" required placeholder="Cihaz Modeli"
+                class="p-4 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-orange-500 text-sm">
+            </div>
+
+            <textarea v-model="servisTalepFormu.arizaAciklamasi" required placeholder="Arıza açıklaması"
+              class="w-full mt-4 p-4 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-orange-500 text-sm min-h-32"></textarea>
+
+            <button type="submit"
+              class="w-full mt-6 bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-xl font-extrabold transition shadow-lg">
+              Servis Talebi Oluştur
+            </button>
+
+            <p class="text-xs text-gray-400 mt-4 text-center">
+              Talep oluşturulduktan sonra e-posta adresinizle giriş yaparak süreci takip edebilirsiniz.
+            </p>
+          </form>
         </div>
       </section>
 
@@ -383,7 +445,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, computed } from 'vue'
 import axios from 'axios'
 
 const isLoginOpen = ref(false)
@@ -406,20 +468,17 @@ const toplamGelir = computed(() =>
 )
 const toastMessage = ref('')
 let eventSource = null
-// Slider
-const sliderIndex = ref(0)
-const sliderImages = [
-  'https://corluyetkiliservis.com.tr/tema/genel/uploads/urunler/7_1.png',
-  'https://corluyetkiliservis.com.tr/tema/genel/uploads/urunler/diger/1_9.png',
-  'https://corluyetkiliservis.com.tr/tema/genel/uploads/urunler/diger/9_8.png',
-]
-let sliderTimer = null
-onMounted(() => {
-  sliderTimer = setInterval(() => {
-    sliderIndex.value = (sliderIndex.value + 1) % sliderImages.length
-  }, 3500)
+
+const servisTalepFormu = ref({
+  ad: '',
+  soyad: '',
+  email: '',
+  telefon: '',
+  cihazMarka: '',
+  cihazModel: '',
+  arizaAciklamasi: ''
 })
-onUnmounted(() => clearInterval(sliderTimer))
+
 
 const markalar = [
   'ARÇELİK','BEKO','VESTEL','PROFİLO','BOSCH','SİEMENS',
@@ -520,6 +579,32 @@ const durumGuncelle = async (id, yeniDurum) => {
     alert('Durum güncellenemedi.')
   }
 }
+
+const servisTalebiGonder = async () => {
+  try {
+    await axios.post('http://localhost:8080/api/randevular/servis-talebi', {
+      ...servisTalepFormu.value,
+      parcaId: 7,
+      saat: 2,
+      stratejiTipi: 'STANDART'
+    })
+
+    showToast('Servis talebiniz başarıyla oluşturuldu. Giriş yaparak servis sürecinizi takip edebilirsiniz.')
+
+    servisTalepFormu.value = {
+      ad: '',
+      soyad: '',
+      email: '',
+      telefon: '',
+      cihazMarka: '',
+      cihazModel: '',
+      arizaAciklamasi: ''
+    }
+  } catch (error) {
+    showToast('Servis talebi oluşturulamadı. Lütfen bilgileri kontrol edin.')
+  }
+}
+
 const logout = () => {
   user.value = null
   randevular.value = []
