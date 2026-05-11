@@ -39,8 +39,6 @@ public class Randevu {
     @JoinColumn(name = "TeknisyenId")
     private Kullanici teknisyen;
 
-    //seffaflık için eklediğim yeni satırlar
-
     @Column(name = "ParcaUcreti")
     private Double parcaUcreti;
 

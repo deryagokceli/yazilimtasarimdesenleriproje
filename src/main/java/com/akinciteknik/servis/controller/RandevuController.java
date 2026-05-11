@@ -9,8 +9,6 @@ import com.akinciteknik.servis.service.command.RandevuCommand;
 import com.akinciteknik.servis.service.command.RandevuDurumGuncelleCommand;
 import com.akinciteknik.servis.dto.ServisTalepRequest;
 import com.akinciteknik.servis.dto.RandevuFiyatlandirRequest;
-
-import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -37,6 +35,7 @@ public class RandevuController {
         List<Randevu> liste = servisYonetimFacade.getMusteriRandevulari(musteriId);
         return ResponseEntity.ok(liste);
     }
+    //Admin panelindeki butonları burayı çağırıyor
     @PutMapping("/{id}/durum")
     public ResponseEntity<?> randevuDurumGuncelle(
             @PathVariable Long id,
@@ -55,6 +54,7 @@ public class RandevuController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    //Kayıtsız veya kayıtlı müşteri servis talebi oluşturunca burası çalışır
     @PostMapping("/servis-talebi")
     public ResponseEntity<?> servisTalebiOlustur(@RequestBody ServisTalepRequest request) {
         try {
@@ -64,6 +64,7 @@ public class RandevuController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    //Admin panelinde kullanılır,tüm randevuları getirir
     @GetMapping
     public ResponseEntity<List<Randevu>> tumRandevulariGetir() {
         List<Randevu> liste = servisYonetimFacade.tumRandevulariGetir();
