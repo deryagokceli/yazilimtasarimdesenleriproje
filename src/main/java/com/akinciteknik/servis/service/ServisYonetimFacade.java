@@ -15,6 +15,7 @@ import com.akinciteknik.servis.service.observer.RandevuObserver;
 import com.akinciteknik.servis.dto.ServisTalepRequest;
 import com.akinciteknik.servis.model.Kullanici;
 import com.akinciteknik.servis.repository.KullaniciRepository;
+import com.akinciteknik.servis.dto.RandevuFiyatlandirRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -33,33 +34,33 @@ public class ServisYonetimFacade {
 
         DatabaseManager.getInstance().baglantiKontrol();
 
-        // 1. Parçayı bulalım
+        // Admin tarafından seçilen parçayı veritabanından çeker
         Parca parca = parcaRepository.findById(parcaId)
                 .orElseThrow(() -> new RuntimeException("Parça bulunamadı"));
 
-        // 2. Strateji seçelim ve hesaplayalım
+        // Strateji seçilir ve hesaplama yapılır
         FiyatHesaplamaStratejisi strateji = stratejiFabrikasi.stratejiGetir(stratejiTipi);
         System.out.println("Aktif strateji: " + strateji.getClass().getSimpleName());
         BigDecimal toplam = strateji.hesapla(parca.getBirimFiyat(), saat);
 
-        // 3. Şeffaflık Verilerini Ayrıştıralım
+        // Şeffaflık Verileri
         // Parça ücretini doğrudan parçadan alıyoruz
         double parcaMaliyeti = parca.getBirimFiyat().doubleValue();
 
         // İşçilik ücreti saatlik servis bedeline göre hesaplanır
         double iscilikMaliyeti = saat * 500;
 
-        // 4. Randevu Nesnesini Detaylıca Güncelleyelim
+        // Müşteriye şeffaf fiyat dökümü göstermek için
         randevu.setParcaUcreti(parcaMaliyeti);
         randevu.setIscilikUcreti(iscilikMaliyeti);
         randevu.setToplamTutar(toplam.doubleValue());
 
-        // Müşteriye gösterilecek servis notunu mevcut açıklamadan alalım
+        // Müşteriye gösterilecek servis notu mevcut açıklamadan alır
         if (randevu.getServisNotu() == null || randevu.getServisNotu().isEmpty()) {
             randevu.setServisNotu(randevu.getArizaAciklamasi());
         }
 
-        // 5. Kaydedelim
+        // Randevuyu kaydeder
         return randevuRepository.save(randevu);
 
     }
@@ -98,12 +99,36 @@ public class ServisYonetimFacade {
         randevu.setArizaAciklamasi(request.getArizaAciklamasi());
         randevu.setDurum("BEKLEMEDE");
 
-        return servisKaydiOlustur(
-                randevu,
-                request.getParcaId(),
-                request.getSaat(),
-                request.getStratejiTipi()
-        );
+        randevu.setToplamTutar(0.0);
+        randevu.setParcaUcreti(0.0);
+        randevu.setIscilikUcreti(0.0);
+        randevu.setServisNotu("Servis talebi alındı. Teknik inceleme bekleniyor.");
+
+        return randevuRepository.save(randevu);
+    }
+    @Transactional
+    public Randevu randevuFiyatlandir(Long randevuId, RandevuFiyatlandirRequest request) {
+
+        Randevu randevu = randevuRepository.findById(randevuId)
+                .orElseThrow(() -> new RuntimeException("Randevu bulunamadı"));
+
+        Parca parca = parcaRepository.findById(request.getParcaId())
+                .orElseThrow(() -> new RuntimeException("Parça bulunamadı"));
+
+        FiyatHesaplamaStratejisi strateji =
+                stratejiFabrikasi.stratejiGetir(request.getStratejiTipi());
+
+        BigDecimal toplam = strateji.hesapla(parca.getBirimFiyat(), request.getSaat());
+
+        double parcaMaliyeti = parca.getBirimFiyat().doubleValue();
+        double iscilikMaliyeti = request.getSaat() * 500;
+
+        randevu.setParcaUcreti(parcaMaliyeti);
+        randevu.setIscilikUcreti(iscilikMaliyeti);
+        randevu.setToplamTutar(toplam.doubleValue());
+        randevu.setServisNotu(request.getServisNotu());
+
+        return randevuRepository.save(randevu);
     }
     public List<Randevu> getMusteriRandevulari(Long musteriId) {
         return randevuRepository.findByMusteriId(musteriId);

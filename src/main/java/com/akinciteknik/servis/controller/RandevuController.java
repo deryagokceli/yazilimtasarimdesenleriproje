@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import com.akinciteknik.servis.service.command.RandevuCommand;
 import com.akinciteknik.servis.service.command.RandevuDurumGuncelleCommand;
 import com.akinciteknik.servis.dto.ServisTalepRequest;
+import com.akinciteknik.servis.dto.RandevuFiyatlandirRequest;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -63,11 +64,22 @@ public class RandevuController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
     @GetMapping
     public ResponseEntity<List<Randevu>> tumRandevulariGetir() {
         List<Randevu> liste = servisYonetimFacade.tumRandevulariGetir();
         return ResponseEntity.ok(liste);
+    }
+    @PutMapping("/{id}/fiyatlandir")
+    public ResponseEntity<?> randevuFiyatlandir(
+            @PathVariable Long id,
+            @RequestBody RandevuFiyatlandirRequest request) {
+        try {
+            Randevu randevu = servisYonetimFacade.randevuFiyatlandir(id, request);
+            return ResponseEntity.ok(randevu);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 }
