@@ -313,8 +313,9 @@
               <th class="p-4 font-bold text-sm text-[#1a237e]">Müşteri</th>
               <th class="p-4 font-bold text-sm text-[#1a237e]">Cihaz / Arıza</th>
               <th class="p-4 font-bold text-sm text-[#1a237e]">Durum</th>
-              <th class="p-4 font-bold text-sm text-[#1a237e]">Toplam</th>
-              <th class="p-4 font-bold text-sm text-[#1a237e]">İşlem</th>
+              <th class="p-4 font-bold text-sm text-[#1a237e]">Fiyat Dökümü</th>
+              <th class="p-4 font-bold text-sm text-[#1a237e]">Teknik İşlem</th>
+              <th class="p-4 font-bold text-sm text-[#1a237e]">Durum</th>
             </tr>
           </thead>
 
@@ -341,8 +342,56 @@
                 </span>
               </td>
 
-              <td class="p-4 font-bold text-orange-600">
-                {{ randevu.toplamTutar }} ₺
+              <td class="p-4 text-sm">
+                <div class="space-y-1">
+                  <div class="flex justify-between gap-4">
+                    <span class="text-gray-400">Parça:</span>
+                    <span class="font-semibold">{{ randevu.parcaUcreti || 0 }} ₺</span>
+                  </div>
+                  <div class="flex justify-between gap-4">
+                    <span class="text-gray-400">İşçilik:</span>
+                    <span class="font-semibold">{{ randevu.iscilikUcreti || 0 }} ₺</span>
+                  </div>
+                  <div class="flex justify-between gap-4 border-t pt-1 mt-1">
+                    <span class="text-gray-700 font-bold">Toplam:</span>
+                    <span class="font-extrabold text-orange-600">{{ randevu.toplamTutar || 0 }} ₺</span>
+                  </div>
+                </div>
+              </td>
+
+              <td class="p-4 min-w-[320px]">
+                <div class="grid grid-cols-1 gap-2">
+                  <select v-model="randevu.seciliParcaId"
+                    class="p-2 bg-gray-50 border border-gray-200 rounded-lg outline-none text-xs">
+                    <option :value="7">Buzdolabı Kompresörü</option>
+                    <option :value="8">Klasik Kompresör</option>
+                    <option :value="9">Kapı Fitili</option>
+                    <option :value="10">Termostat</option>
+                    <option :value="11">Fan Motoru</option>
+                  </select>
+
+                  <select v-model="randevu.iscilikSaati"
+                    class="p-2 bg-gray-50 border border-gray-200 rounded-lg outline-none text-xs">
+                    <option :value="1">1 Saat İşçilik</option>
+                    <option :value="2">2 Saat İşçilik</option>
+                    <option :value="3">3 Saat İşçilik</option>
+                  </select>
+
+                  <select v-model="randevu.stratejiTipi"
+                    class="p-2 bg-gray-50 border border-gray-200 rounded-lg outline-none text-xs">
+                    <option value="STANDART">Standart Fiyat</option>
+                    <option value="INDIRIMLI">İndirimli Fiyat</option>
+                  </select>
+
+                  <input v-model="randevu.yeniServisNotu"
+                    placeholder="Servis notu"
+                    class="p-2 bg-gray-50 border border-gray-200 rounded-lg outline-none text-xs">
+
+                  <button @click="randevuFiyatlandir(randevu)"
+                    class="bg-orange-500 text-white px-3 py-2 rounded-lg text-xs font-bold hover:bg-orange-600">
+                    Fiyatlandır
+                  </button>
+                </div>
               </td>
 
               <td class="p-4">
@@ -605,6 +654,21 @@ const durumGuncelle = async (id, yeniDurum) => {
     await fetchRandevular()
   } catch (error) {
     alert('Durum güncellenemedi.')
+  }
+}
+const randevuFiyatlandir = async (randevu) => {
+  try {
+    await axios.put(`http://localhost:8080/api/randevular/${randevu.id}/fiyatlandir`, {
+      parcaId: randevu.seciliParcaId || 7,
+      saat: randevu.iscilikSaati || 2,
+      stratejiTipi: randevu.stratejiTipi || 'STANDART',
+      servisNotu: randevu.yeniServisNotu || randevu.servisNotu || randevu.arizaAciklamasi
+    })
+
+    showToast('Servis fiyatlandırması güncellendi.')
+    await fetchRandevular()
+  } catch (error) {
+    showToast('Fiyatlandırma güncellenemedi.')
   }
 }
 
